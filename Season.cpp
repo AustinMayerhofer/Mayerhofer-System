@@ -147,6 +147,29 @@ void Season::read_scores(std::string file_name) {
 	file.close();
 }
 
+void Season::read_scores_NFL(std::string file_name) {
+	std::ifstream file;
+	std::string line;
+
+	open_file(file, file_name);
+
+	while (getline(file, line)) {
+		std::istringstream line_stream(line);
+		std::string token;
+		int i = 0;  // i refers to the index of the token on each line (separated by commas)
+		while(getline(line_stream, token, ',')) {
+			if (i == 4) {  // reached the winning team name token
+				create_game_NFL(line_stream, token, ',');
+				break;
+			}
+			
+			i++;
+		}
+	}
+
+	file.close();
+}
+
 std::string Season::get_team_name(const std::string& line) {
 	std::string team_name = line.substr(0, line.find(","));
 	return team_name;
@@ -189,6 +212,28 @@ void Season::create_game(std::istringstream& stream, std::string token, char del
 
 }
 
+void Season::create_game_NFL(std::istringstream& stream, std::string token, char delimiter) {
+	std::string winner_name, loser_name;
+	int winner_score, loser_score;
+
+	read_game_NFL(winner_name, winner_score, loser_name, loser_score, stream, token, delimiter);
+
+	// Check if team exists
+	if (teams.count(winner_name) == 0)
+		throw_team_does_not_exist_error(winner_name);
+	if (teams.count(loser_name) == 0)
+		throw_team_does_not_exist_error(loser_name);
+
+	Team* winning_team = teams.at(winner_name);
+	Team* losing_team = teams.at(loser_name);
+	Game* game = new Game(winning_team, losing_team, winner_score, loser_score);
+	games.push_back(game);
+	
+	winning_team->play_game(game);
+	losing_team->play_game(game);
+
+}
+
 void Season::read_game(std::string& winner_name, int& winner_score, std::string& loser_name, int& loser_score, 
 std::istringstream& stream, std::string token, char delimiter) {
 	winner_name = read_team_name_from_scores_file(token);
@@ -197,6 +242,19 @@ std::istringstream& stream, std::string token, char delimiter) {
 	getline(stream, token, delimiter);  // filter out next token
 	getline(stream, token, delimiter);  // get losing team name
 	loser_name = read_team_name_from_scores_file(token);
+	getline(stream, token, delimiter);  // get losing team score
+	loser_score = std::stoi(token);
+}
+
+void Season::read_game_NFL(std::string& winner_name, int& winner_score, std::string& loser_name, int& loser_score, 
+std::istringstream& stream, std::string token, char delimiter) {
+	winner_name = read_team_name_from_scores_file(token);
+	getline(stream, token, delimiter);  // filter out next token
+	getline(stream, token, delimiter);  // get losing team name
+	loser_name = read_team_name_from_scores_file(token);
+	getline(stream, token, delimiter);  // filter out next token
+	getline(stream, token, delimiter);  // get winning score
+	winner_score = std::stoi(token);
 	getline(stream, token, delimiter);  // get losing team score
 	loser_score = std::stoi(token);
 }

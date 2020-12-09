@@ -44,8 +44,16 @@ double Team::calculate_ranking_points() {
 	for (Game* game_ptr : games) {
 		ranking_points += ranking_points_for_game(game_ptr);
 	}
-	ranking_points = ranking_points;  // FIXME: adjust for games played
-	//ranking_points /= 10;  // FIXME: just to look nice when adjusting for games played
+	//ranking_points = ranking_points;  // does not account for number of games played
+	/*
+	ranking_points = ranking_points / games.size(); // accounts for number of games played
+	ranking_points /= 10;  // just to look nice when adjusting for games played
+	*/
+	
+	//ranking_points = ranking_points / get_num_wins(); // accounts for number of wins
+
+	ranking_points = ranking_points / log2(games.size()); // accounts for log(games played)
+	
 	return ranking_points;
 }
 
@@ -63,6 +71,7 @@ double Team::ranking_points_for_game(Game* game) {
 	}
 
 	r_points += add_rank_points_for_score_margin(r_points, game->get_winner_score(), game->get_loser_score());
+	
 	return r_points;
 
 
@@ -71,33 +80,33 @@ double Team::ranking_points_for_game(Game* game) {
 int Team::convert_win_pct_to_ranking_points_for_win(double win_pct, char opp_conf_type) {
 	if ((opp_conf_type == 'F') || 
 		(opp_conf_type == 'G' && win_pct <= .4)) {
-		return 1;
+		return 2;
 	}
 	else if ((opp_conf_type == 'G' && win_pct > .4 && win_pct <= .6) || 
 		(opp_conf_type == 'P' && win_pct < .4)) {
-		return 2;
+		return 3;
 	}
 	else if (opp_conf_type == 'P' && win_pct >= .4 && win_pct < .5) {
-		return 3;
+		return 4;
 	}
 	else if ((opp_conf_type == 'G' && win_pct > .6 && win_pct <= .75) || 
 		(opp_conf_type == 'P' && win_pct >= .5 && win_pct < .6)) {
-		return 4;
+		return 5;
 	}
 	else if ((opp_conf_type == 'G' && win_pct > .75 && win_pct < .834) ||
 		(opp_conf_type == 'P' && win_pct >= .6 && win_pct < .667)) {
-		return 5;
+		return 6;
 	}
 	else if ((opp_conf_type == 'G' && win_pct >= .834 && win_pct <= .916) || 
 		(opp_conf_type == 'P' && win_pct >= .667 && win_pct <= .75)) {
-		return 6;
+		return 7;
 	}
 	else if ((opp_conf_type == 'G' && win_pct > .916) || 
 		(opp_conf_type == 'P' && win_pct > .75 && win_pct < .917)) {
-		return 7;
+		return 8;
 	}
 	else if (opp_conf_type == 'P' && win_pct >= .917) {
-		return 8;
+		return 9;
 	}
 	else {
 		std::cerr << "Error: in convert_win_pct_to_ranking_points_for_win in Team.cpp, function did not return properly" << std::endl;
@@ -106,7 +115,7 @@ int Team::convert_win_pct_to_ranking_points_for_win(double win_pct, char opp_con
 }
 
 int Team::convert_win_pct_to_ranking_points_for_loss(double win_pct, char opp_conf_type) {
-	return convert_win_pct_to_ranking_points_for_win(win_pct, opp_conf_type) - 9;
+	return convert_win_pct_to_ranking_points_for_win(win_pct, opp_conf_type) - 11;
 }
 
 double Team::add_rank_points_for_score_margin(double r_points, int winner_score, int loser_score) {
