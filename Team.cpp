@@ -2,6 +2,7 @@
 #include "Game.h"
 #include <iomanip>
 #include <math.h>
+#include <queue>
 
 Team::Team(std::string team_name, char conf_type) : name(team_name), conf(conf_type), wins(0), losses(0), ranking_points(0) {
 
@@ -41,9 +42,24 @@ double Team::get_win_percentage() {
 
 double Team::calculate_ranking_points() {
 	double ranking_points = 0;
+	std::priority_queue<int> best_wins;
+	int num_priority_games = 3;
+	// Add points for games
 	for (Game* game_ptr : games) {
 		ranking_points += ranking_points_for_game(game_ptr);
 	}
+	// Add points for top 3 wins (without scoring margin)
+	for (Game* game_ptr : games) {
+		if (game_ptr->get_winner()->get_name() == name) {
+			int points_from_game = convert_win_pct_to_ranking_points_for_win(game_ptr->get_loser()->get_win_percentage(), game_ptr->get_loser()->get_conf_type());
+			best_wins.push(points_from_game);
+		}
+	}
+	for (int i = 0; i < num_priority_games && !best_wins.empty(); i++) {
+		ranking_points += best_wins.top();
+		best_wins.pop();
+	}
+
 	//ranking_points = ranking_points;  // does not account for number of games played
 	/*
 	ranking_points = ranking_points / games.size(); // accounts for number of games played
