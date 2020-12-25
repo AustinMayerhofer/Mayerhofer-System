@@ -68,7 +68,7 @@ double Team::calculate_ranking_points() {
 	
 	//ranking_points = ranking_points / get_num_wins(); // accounts for number of wins
 
-	ranking_points = ranking_points / log2(games.size()); // accounts for log(games played)
+	ranking_points = ranking_points / log2(games.size() + 2); // accounts for log(games played)
 	
 	return ranking_points;
 }

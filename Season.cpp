@@ -6,7 +6,13 @@
 #include <algorithm>
 
 
-Season::Season(std::string team_file, std::string scores_file)
+Season::Season(std::string team_file, std::string scores_file) : week(100) // arbitrary high number for no week
+{
+	read_teams(team_file);
+	read_scores(scores_file);
+}
+
+Season::Season(std::string team_file, std::string scores_file, int week_num) : week(week_num)
 {
 	read_teams(team_file);
 	read_scores(scores_file);
@@ -133,7 +139,12 @@ void Season::read_scores(std::string file_name) {
 	while (getline(file, line)) {
 		std::istringstream line_stream(line);
 		std::string token;
-		int i = 0;  // i refers to the index of the token on each line (separated by commas)
+		getline(line_stream, token, ',');
+		getline(line_stream, token, ',');
+		if (std::stoi(token) > week) {
+			break;
+		}
+		int i = 2;  // i refers to the index of the token on each line (separated by commas)
 		while(getline(line_stream, token, ',')) {
 			if (i == 5) {  // reached the winning team name token
 				create_game(line_stream, token, ',');
