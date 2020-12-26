@@ -43,10 +43,19 @@ double Team::get_win_percentage() {
 double Team::calculate_ranking_points() {
 	double ranking_points = 0;
 	std::priority_queue<int> best_wins;
-	int num_priority_games = 3;
+	int num_priority_games = 3; // changeable: number of "big win" boosts a team can get
+	double difference_in_importance_first_vs_last_game = 0.1; // changeable: percentage difference in importance between first and last game
 	// Add points for games
+	/*
 	for (Game* game_ptr : games) {
 		ranking_points += ranking_points_for_game(game_ptr);
+	}
+	*/
+	double game_multiplier = 1;
+	for (int i = games.size() - 1; i >= 0; i--) {
+		ranking_points += game_multiplier * ranking_points_for_game(games[i]);
+		if (games.size() != 1) { game_multiplier -= difference_in_importance_first_vs_last_game / (games.size() - 1.0); }
+		
 	}
 	// Add points for top 3 wins (without scoring margin)
 	for (Game* game_ptr : games) {
