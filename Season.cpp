@@ -52,7 +52,7 @@ void Season::print_rankings_to_csv() {
     std::ofstream output_file;
     output_file.open("Visualizations/ranks.csv");
 
-    output_file << "rank,name,wins,losses,ranking points\n";
+    output_file << "rank,name,wins,losses,ranking_points\n";
 
     for (unsigned int i = 0; i < mayerhofer_rankings.size(); i++) {
 		output_file << i + 1 << ",";
