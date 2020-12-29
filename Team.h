@@ -17,6 +17,7 @@ public:
 	double get_win_percentage();
 	double calculate_ranking_points(); // Algorithm for ranking teams
 	void print();
+    std::string toString();
 private:
 	std::vector<Game*> games;
 	std::string name;

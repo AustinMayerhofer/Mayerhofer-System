@@ -46,6 +46,26 @@ void Season::print_mayerhofer_rankings() {
 	}
 }
 
+void Season::print_rankings_to_csv() {
+    generate_mayerhofer_rankings();
+
+    std::ofstream output_file;
+    output_file.open("Visualizations/ranks.csv");
+
+    output_file << "rank,name,wins,losses,ranking points\n";
+
+    for (unsigned int i = 0; i < mayerhofer_rankings.size(); i++) {
+		output_file << i + 1 << ",";
+		//output_file << mayerhofer_rankings.at(mayerhofer_rankings.size() - i - 1)->toString() << ',' << '\n';
+        output_file << mayerhofer_rankings.at(mayerhofer_rankings.size() - i - 1)->get_name() << ',';
+        output_file << mayerhofer_rankings.at(mayerhofer_rankings.size() - i - 1)->get_num_wins() << ',';
+        output_file << mayerhofer_rankings.at(mayerhofer_rankings.size() - i - 1)->get_num_losses() << ',';
+        output_file << mayerhofer_rankings.at(mayerhofer_rankings.size() - i - 1)->calculate_ranking_points() << '\n';
+	}
+
+    output_file.close();
+}
+
 void Season::predict_games(std::string future_games_file) {
 	std::ifstream file;
 	std::string line;

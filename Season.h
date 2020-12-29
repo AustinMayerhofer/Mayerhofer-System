@@ -12,6 +12,7 @@ public:
 	~Season();
 	void print_FBS_teams_alphabetical_order();
 	void print_mayerhofer_rankings();
+    void print_rankings_to_csv();
 	void predict_games(std::string future_games_file);
 	void check_prediction_accuracy(std::string results_file);
 

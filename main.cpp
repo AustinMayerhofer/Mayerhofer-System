@@ -19,10 +19,12 @@ int main(int argc, char* argv[]) {
 	if (argc == 3) {
 		Season season(argv[1], argv[2]);
 		season.print_mayerhofer_rankings();
+        season.print_rankings_to_csv();
 	}
 	else if (argc == 4) {
 		Season season(argv[1], argv[2], std::stoi(argv[3]));
 		season.print_mayerhofer_rankings();
+        season.print_rankings_to_csv();
 	}
 	else if (argc == 5) {
 		Season season(argv[1], argv[2]);

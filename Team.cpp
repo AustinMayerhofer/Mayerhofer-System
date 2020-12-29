@@ -57,10 +57,11 @@ double Team::calculate_ranking_points() {
 		if (games.size() != 1) { game_multiplier -= difference_in_importance_first_vs_last_game / (games.size() - 1.0); }
 		
 	}
-	// Add points for top 3 wins (without scoring margin)
+	// Add points for top 3 wins
 	for (Game* game_ptr : games) {
 		if (game_ptr->get_winner()->get_name() == name) {
-			int points_from_game = convert_win_pct_to_ranking_points_for_win(game_ptr->get_loser()->get_win_percentage(), game_ptr->get_loser()->get_conf_type());
+			//int points_from_game = ranking_points_for_game(game_ptr); // with scoring margin
+			int points_from_game = convert_win_pct_to_ranking_points_for_win(game_ptr->get_loser()->get_win_percentage(), game_ptr->get_loser()->get_conf_type()); // without scoring margin
 			best_wins.push(points_from_game);
 		}
 	}
@@ -84,6 +85,11 @@ double Team::calculate_ranking_points() {
 
 void Team::print() {
 	std::cout << name << ": " << wins << "-" << losses << " (" << calculate_ranking_points() << ")";
+}
+
+std::string Team::toString() {
+    std::string ret = name + ": " + std::to_string(wins) + "-" + std::to_string(losses) + " (" + std::to_string(calculate_ranking_points()) + ")";
+    return ret;
 }
 
 double Team::ranking_points_for_game(Game* game) {
